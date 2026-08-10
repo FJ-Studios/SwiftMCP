@@ -1,0 +1,12 @@
+.build/
+.swiftpm/
+*.xcodeproj
+Package.resolved
+.DS_Store
+
+# kagami SQLite history scratch (shard-merged, never committed)
+# [[kagami-test-history-shard-drain-not-global-write]]
+.kagami/history.db*
+.kagami/tmp/
+# auto-discovery cache; scopes.override.toml is the committed SSoT
+.kagami/scopes.toml

@@ -474,16 +474,25 @@ public actor MCPServer {
     }
 
     private func handleToolsList(_ request: JSONRPCRequest) -> JSONRPCResponse {
-        let toolList: [JSONValue] = tools.values
+        // Emitted through `MCPToolDescriptor` rather than an inline dict
+        // literal so this server's outbound shape IS the shape clients
+        // decode with (`MCPToolDescriptor.list(fromToolsListResult:)`).
+        // Byte-identical to the previous literal — same three keys, same
+        // name-sorted order.
+        return JSONRPCResponse(
+            id: request.id,
+            result: MCPToolDescriptor.toolsListResult(descriptors())
+        )
+    }
+
+    /// Every registered tool's advertisement, name-sorted. Exposed
+    /// separately from the JSON-RPC handler so callers that aggregate or
+    /// filter this server's catalogue (a gateway, a test) can read it
+    /// without building a request.
+    public func descriptors() -> [MCPToolDescriptor] {
+        tools.values
             .sorted { $0.name < $1.name }
-            .map { entry in
-                .object([
-                    "name": .string(entry.name),
-                    "description": .string(entry.description),
-                    "inputSchema": entry.inputSchema,
-                ])
-            }
-        return JSONRPCResponse(id: request.id, result: .object(["tools": .array(toolList)]))
+            .map(\.descriptor)
     }
 
     private func handleToolsCall(_ request: JSONRPCRequest) async -> JSONRPCResponse {
