@@ -1,0 +1,36 @@
+# SwiftMCP kagami scope registrations.
+#
+# Every scope carries an `expected_test_min` floor, registered in the SAME
+# change that adds the tests it counts. The floor is what turns a silent
+# "0 tests ran, exit 0" into a failure — an exit code alone is not evidence
+# a suite executed.
+#
+# Arrays are single-line: kagami's TOML reader does not parse multi-line
+# arrays (it fails with "no '=' in ...").
+#
+# Run:  kagami test --scope SwiftMCPCore
+#       kagami test --scope SwiftMCPServer
+
+[[scopes]]
+name = "SwiftMCPCore"
+language = "swift"
+package_path = "."
+test_target_name = "SwiftMCPCoreTests"
+module_patterns = ["SwiftMCPCore"]
+type_patterns = ["JSONValue", "JSONValueTests", "MCPToolDescriptor", "MCPToolDescriptorTests", "MCPTool", "MCPToolEntry", "MCPContext", "ToolResultBuilder"]
+test_file_patterns = ["**/SwiftMCPCoreTests/**/*.swift"]
+expected_test_min = 28
+timeout = 120
+description = "SwiftMCPCore: JSONValue codec + MCPToolDescriptor (the tools/list wire object) and its bridges from the MCPTool protocol. Run: kagami test --scope SwiftMCPCore"
+
+[[scopes]]
+name = "SwiftMCPServer"
+language = "swift"
+package_path = "."
+test_target_name = "SwiftMCPServerTests"
+module_patterns = ["SwiftMCPServer"]
+type_patterns = ["MCPServer", "RobustnessTests", "FramingTests", "ToolsListWireShapeTests"]
+test_file_patterns = ["**/SwiftMCPServerTests/**/*.swift"]
+expected_test_min = 17
+timeout = 180
+description = "SwiftMCPServer: MCPServer actor robustness, LSP/newline framing, and the tools/list wire-shape guard. Run: kagami test --scope SwiftMCPServer"
